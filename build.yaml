@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      clean_annotation_generator|clean_annotation:
+        enabled: true
+
+builders:
+  clean_annotation_generator:
+    target: ":clean_annotation_generator"
+    import: "package:clean_annotation_generator/builder.dart"
+    builder_factories: ["generateRepository","generateUsecase","generateAutowired",]
+    build_extensions: { ".dart": [".g.dart"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
