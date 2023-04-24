@@ -1,4 +1,6 @@
-import 'package:build/src/builder/build_step.dart';
+// ignore_for_file: depend_on_referenced_packages
+
+import 'package:build/build.dart';
 import 'package:analyzer/dart/element/element.dart';
 
 import 'package:source_gen/source_gen.dart';
@@ -10,7 +12,7 @@ import 'model_visitor.dart';
 class RepositoryGenerator extends GeneratorForAnnotation<RepositoryAnnotation> {
   // 1
   @override
-  String generateForAnnotatedElement(
+  dynamic generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) {
     final visitor = ModelVisitor();
     element.visitChildren(visitor);
@@ -21,6 +23,7 @@ class RepositoryGenerator extends GeneratorForAnnotation<RepositoryAnnotation> {
     final classBuffer = StringBuffer();
 
     classBuffer.writeln('class $className extends ${visitor.className} {');
+    classBuffer.writeln('//gen test==> ${element.children}');
 
     classBuffer.writeln('Map<String, dynamic> variables = {};');
 
