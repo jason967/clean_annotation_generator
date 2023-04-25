@@ -1,17 +1,27 @@
 builders:
-  generateRepository:
-    import: "package:clean_annotation_generator/builder.dart"
-    builder_factories: ["generateRepository"]
-    build_extensions: { ".dart": [".g.dart"] }
-    auto_apply: dependents
-    build_to: cache
-    applies_builders: ["source_gen|combining_builder"]
+  # generateRepository:
+  #   import: "package:clean_annotation_generator/builder.dart"
+  #   builder_factories: ["generateRepository"]
+  #   build_extensions: { ".dart": [".g.dart"] }
+  #   auto_apply: dependents
+  #   build_to: cache
+  #   applies_builders: ["source_gen|combining_builder"]
 
   generateSample:
     import: "package:clean_annotation_generator/builder.dart"
     builder_factories: ["generateSample"]
-    build_extensions: { ".dart": [".sample.part"] }
+    build_extensions: { ".dart": [".sample.json"] }
     auto_apply: dependents
     build_to: source
-    runs_before: ["clean_annotation_generator|generateRepository"]
+    # 밑에 녀석 실행되기 전에 실행되어야 한다를 선언해주는 거 같음
+    runs_before: ["clean_annotation_generator|generateInitialize"]
+    applies_builders: ["source_gen|combining_builder"]
+
+  generateInitialize:
+    import: "package:clean_annotation_generator/builder.dart"
+    builder_factories: ["generateInitialize"]
+    build_extensions: { ".dart": [".init.dart"] }
+    auto_apply: dependents
+    build_to: source
+    # runs_before: ["clean_annotation_generator|generateSample"]
     applies_builders: ["source_gen|combining_builder"]

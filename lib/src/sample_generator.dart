@@ -1,8 +1,12 @@
-import 'package:analyzer/dart/element/element.dart';
+// ignore_for_file: implementation_imports
+
+import 'dart:convert';
+
 import 'package:build/src/builder/build_step.dart';
 import 'package:clean_annotation/annotations.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
+
 import 'dart:async';
 
 import 'package:source_gen/source_gen.dart';
@@ -11,16 +15,34 @@ const TypeChecker _typeChecker = TypeChecker.fromRuntime(RepositoryAnnotation);
 
 class SampleGenerator implements Generator {
   @override
-  FutureOr<String?> generate(LibraryReader library, BuildStep buildStep) {
-    // final dartFile = Glob('lib/**.repo.dart');
+  FutureOr<String?> generate(LibraryReader library, BuildStep buildStep) async {
+    final dartFile = Glob('**/injection.dart');
+
     var buffer = StringBuffer();
+    // await for (final id in buildStep.findAssets(dartFile)) {
+    //   final step = await buildStep.readAsString(id);
+    //   buffer.writeln('// $id');
+    // }
+    final sample_list = [];
 
     for (final clazz in library.classes) {
+      // if (clazz.source.shortName.contains('injection.dart')) {
       if (_typeChecker.hasAnnotationOfExact(clazz)) {
-        buffer.writeln('${clazz.displayName}');
-        return buffer.toString();
+        sample_list.add(clazz.displayName);
+        // buffer.writeln('// class Generated ${clazz.source.shortName} {}');
       }
+      final encoded = jsonEncode(sample_list);
+      buffer.writeln(encoded);
+      // }
     }
+    return buffer.toString();
+
+    // for (final clazz in library.classes) {
+    //   if (_typeChecker.hasAnnotationOfExact(clazz)) {
+    //     buffer.writeln('// class Generated${clazz.source.shortName} {}');
+    //     return buffer.toString();
+    //   }
+    // }
     // final classList = dartFile.listSync();
     // if (classList.isNotEmpty) {
     //   var buffer = StringBuffer();
