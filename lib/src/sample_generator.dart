@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:build/src/builder/build_step.dart';
 import 'package:clean_annotation/annotations.dart';
+
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
 
@@ -11,64 +12,67 @@ import 'dart:async';
 
 import 'package:source_gen/source_gen.dart';
 
+import '../builder.dart';
+
 const TypeChecker _typeChecker = TypeChecker.fromRuntime(RepositoryAnnotation);
 
 class SampleGenerator implements Generator {
+  TypeChecker get isRepository =>
+      const TypeChecker.fromRuntime(RepositoryAnnotation);
+
   @override
   FutureOr<String?> generate(LibraryReader library, BuildStep buildStep) async {
-    final dartFile = Glob('**/injection.dart');
-
+    // final values = <String>{};
     var buffer = StringBuffer();
-    // await for (final id in buildStep.findAssets(dartFile)) {
-    //   final step = await buildStep.readAsString(id);
-    //   buffer.writeln('// $id');
-    // }
-    final sample_list = [];
+    buffer.writeln('${++Index().index}');
 
-    for (final clazz in library.classes) {
-      // if (clazz.source.shortName.contains('injection.dart')) {
-      if (_typeChecker.hasAnnotationOfExact(clazz)) {
-        sample_list.add(clazz.displayName);
-        // buffer.writeln('// class Generated ${clazz.source.shortName} {}');
-      }
-      final encoded = jsonEncode(sample_list);
-      buffer.writeln(encoded);
-      // }
-    }
+    // try {
+    //   buffer.writeln('${library.element}');
+    // } catch (e) {
+    //   buffer.writeln('$e');
+    // }
+    // return buffer.toString();
+
+    // for (var annotatedElement in library.annotatedWith(_typeChecker)) {
+    //   buffer.writeln('// gg ${library.toString()}');
+    //   // buffer.writeln(
+    //   //     '// annotation : ${annotatedElement.annotation.}');
+    //   buffer.writeln('// element : ${annotatedElement.element.library!.name}');
+    // }
+
+    buffer.writeln(
+        '// len: ${library.allElements.length}, lib : ${library.element.source.shortName}');
+    // for (final clazz in library.allElements) {
+    //   buffer.write('// kkk  ${clazz.source} \n');
+
+    //   // if (clazz.source.shortName.contains('injection.dart')) {
+    //   //   return buffer.toString();
+    //   // }
+    // }
     return buffer.toString();
+
+    // return null;
+
+    // return values.join('\n\n');
+
+    // final dartFile = Glob('lib/injection.dart');
+    // // final isInjection = dartFile.listSync().isNotEmpty;
+    // var buffer = StringBuffer();
+    // buffer.writeln('${dartFile.listSync()}');
+    // // await for (final id in buildStep.findAssets(dartFile)) {
+    // //   final step = await buildStep.readAsString(id);
+    // //   buffer.writeln('// $id');
+    // // }
+    // final sample_list = [];
 
     // for (final clazz in library.classes) {
     //   if (_typeChecker.hasAnnotationOfExact(clazz)) {
-    //     buffer.writeln('// class Generated${clazz.source.shortName} {}');
-    //     return buffer.toString();
+    //     sample_list.add(clazz.displayName);
     //   }
+    //   final encoded = jsonEncode(sample_list);
+    //   buffer.writeln(encoded);
     // }
-    // final classList = dartFile.listSync();
-    // if (classList.isNotEmpty) {
-    //   var buffer = StringBuffer();
-    //   for (var item in dartFile.listSync()) {
-    //     buffer.writeln(item);
-    //   }
-    //   final classes =
-    //       library.annotatedWith(TypeChecker.fromRuntime(RepositoryAnnotation).ha);
-    //   try {
-    //     for (final aa in classes) {
-    //       buffer.writeln('${aa.annotation.}');
-    //     }
-    //   } catch (e) {
-    //     buffer.writeln('// $e');
-    //   }
-    //   // buffer.writeln('// $classes');
-    //   // buffer.writeln('// ${classList}');
 
-    //   // // library.allElements.forEach((element) {
-    //   // //   buffer.writeln(
-    //   // //       '// ${element.displayName} - ${element.source.fullName} - ${element.declaration}');
-    //   // // });
-
-    //   return buffer.toString();
-    // }
-    return null;
     // return buffer.toString();
   }
 }

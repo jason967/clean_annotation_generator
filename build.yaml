@@ -7,15 +7,15 @@ builders:
   #   build_to: cache
   #   applies_builders: ["source_gen|combining_builder"]
 
-  generateSample:
-    import: "package:clean_annotation_generator/builder.dart"
-    builder_factories: ["generateSample"]
-    build_extensions: { ".dart": [".sample.json"] }
-    auto_apply: dependents
-    build_to: source
-    # 밑에 녀석 실행되기 전에 실행되어야 한다를 선언해주는 거 같음
-    runs_before: ["clean_annotation_generator|generateInitialize"]
-    applies_builders: ["source_gen|combining_builder"]
+  # generateSample:
+  #   import: "package:clean_annotation_generator/builder.dart"
+  #   builder_factories: ["generateSample"]
+  #   build_extensions: { ".dart": [".sample.json"] }
+  #   auto_apply: dependents
+  #   build_to: source
+  #   # 밑에 녀석 실행되기 전에 실행되어야 한다를 선언해주는 거 같음
+  #   runs_before: ["clean_annotation_generator|generateInitialize"]
+  #   applies_builders: ["source_gen|combining_builder"]
 
   generateInitialize:
     import: "package:clean_annotation_generator/builder.dart"
@@ -23,5 +23,15 @@ builders:
     build_extensions: { ".dart": [".init.dart"] }
     auto_apply: dependents
     build_to: source
-    # runs_before: ["clean_annotation_generator|generateSample"]
+    # runs_before: ["clean_annotation_generator|generateRepository"]
+    applies_builders: ["source_gen|combining_builder"]
+
+  generateRepository:
+    import: "package:clean_annotation_generator/builder.dart"
+    builder_factories: ["generateRepository"]
+    build_extensions: { ".dart": [".repository.dart"] }
+    auto_apply: dependents
+    build_to: source
+    #해당 빌더를 실행하기 전에 다른 빌더가 먼저 실행되어야할 떄 사용
+    runs_before: ["clean_annotation_generator|generateInitialize"]
     applies_builders: ["source_gen|combining_builder"]

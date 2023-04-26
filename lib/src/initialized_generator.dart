@@ -1,4 +1,4 @@
-import 'dart:convert';
+// ignore_for_file: implementation_imports, depend_on_referenced_packages
 
 import 'package:build/src/builder/build_step.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -6,6 +6,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:glob/glob.dart';
 
 import 'package:dart_style/dart_style.dart';
+import 'package:glob/list_local_fs.dart';
 
 import 'package:source_gen/source_gen.dart';
 
@@ -19,19 +20,19 @@ class InitializedGenerator
   @override
   dynamic generateForAnnotatedElement(
       Element element, ConstantReader annotation, BuildStep buildStep) async {
-    final dartFiles = Glob('lib/src/**.sample.dart');
+    final dartFiles = Glob('lib/src/**.repository.dart');
 
-    // final classBuffer = StringBuffer();
-    // classBuffer.writeln('// ***** generated ******');
-    // classBuffer.writeln('// ***** ${dartFiles.listSync()}');
-    // final asset = await buildStep.findAssets(dartFiles).first;
-    // classBuffer.writeln('// ***** asset --> $asset');
+    final classBuffer = StringBuffer();
+    classBuffer.writeln('// ***** generated ******');
+    classBuffer.writeln('// ***** ${dartFiles.listSync()}');
+    final asset = await buildStep.findAssets(dartFiles).first;
+    classBuffer.writeln('// ***** asset --> $asset');
 
-    // await for (var id in buildStep.findAssets(dartFiles)) {
-    //   final step = await buildStep.readAsString(id);
-    //   classBuffer.writeln(step);
-    // }
-    // return classBuffer.toString();
+    await for (var id in buildStep.findAssets(dartFiles)) {
+      final step = await buildStep.readAsString(id);
+      classBuffer.writeln(step);
+    }
+    return classBuffer.toString();
 
     final lib = Library(
       (b) => b
